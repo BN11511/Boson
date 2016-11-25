@@ -6,7 +6,7 @@ from keras.regularizers import l2, activity_l2
 # fix random seed for reproducibility
 seed = 7
 numpy.random.seed(seed)
-# load pima indians dataset
+# load dataset
 dataset = numpy.loadtxt("training.csv", delimiter=",")
 # split into input (X) and output (Y) variables
 X = dataset[:10000:,1:32]

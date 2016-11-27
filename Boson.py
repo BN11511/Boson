@@ -26,3 +26,5 @@ model.fit(X, Y, nb_epoch=200, batch_size=96)
 # evaluate the model
 scores = model.evaluate(X, Y)
 print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+
+#test

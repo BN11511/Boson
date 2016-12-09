@@ -1,8 +1,13 @@
 # Create first network with Keras
 from keras.models import Sequential
-from keras.layers import Dense, Activation
+from keras.layers import Dense, Activation, Dropout,Layer
 from keras.optimizers import SGD
 from keras.optimizers import RMSprop
+import math
+
+from keras import backend as K
+from theano import tensor as T
+
 from sklearn.model_selection import StratifiedKFold
 
 import numpy
@@ -14,14 +19,37 @@ numpy.random.seed(seed)
 
 from keras.utils import np_utils
 
+class WinnerTakeAll1D_GaborMellis(Layer):
+
+    def __init__(self, spatial=1, OneOnX = 3,**kwargs):
+        self.spatial = spatial
+        self.OneOnX = OneOnX
+        self.uses_learning_phase = True
+        super(WinnerTakeAll1D_GaborMellis, self).__init__(**kwargs)
+
+    def call(self, x, mask=None):
+        R = T.reshape(x,(T.shape(x)[0],T.shape(x)[1]/self.OneOnX,self.OneOnX))
+        M = K.max(R, axis=(2), keepdims=True)
+        R = K.switch(K.equal(R, M), R, 0.)
+        R = T.reshape(R,(T.shape(x)[0],T.shape(x)[1]))
+        return R
+
+    def get_output_shape_for(self, input_shape):
+        shape = list(input_shape)
+        return tuple(shape)
+    
+L=WinnerTakeAll1D_GaborMellis(spatial=1, OneOnX=4)
+
 # load dataset
 dataframe = pandas.read_csv("training.csv", header=None)
 dataset = dataframe.values
 # split into input (X) and output (Y) variables
-X = dataset[1:10000:,1:32].astype(float)
+W = dataset[1:10000:,31:32]
+X = dataset[1:10000:,1:31].astype(float)
 Y = dataset[1:10000:,32].astype(float)
-X2 = dataset[10000:50000:,1:32].astype(float)
-Y2 = dataset[10000:50000:,32].astype(float)
+X2 = dataset[10000:200000:,1:31].astype(float)
+Y2 = dataset[10000:200000:,32].astype(float)
+
 
 Y = np_utils.to_categorical(Y, 2) # convert class vectors to binary class matrices
 #Y2 = np_utils.to_categorical(Y2, 2)
@@ -35,9 +63,14 @@ for train, test in kfold.split(X2, Y2):
 	Y3 = np_utils.to_categorical(Y2, 2) # convert class vectors to binary class matrices
 	
 	model = Sequential()
-	model.add(Dense(30, input_dim=31, init='normal', activation='relu' ,W_regularizer=l1(0.000001), activity_regularizer=activity_l1(0.000001)))
-	model.add(Dense(30, activation='relu' ))
-	model.add(Dense(30, activation ='relu'))
+	
+	
+	model.add(Dense(300, input_dim=30, init='normal', activation='relu' ,W_regularizer=l1(0.000001), activity_regularizer=activity_l1(0.000001)))
+	model.add(L)
+	model.add(Dense(300, activation ='relu'))
+	model.add(L)
+	model.add(Dense(300, activation ='relu'))
+	model.add(L)
 	model.add(Dense(2))
 	model.add(Activation('softmax'))
 	#model.add(Activation('sigmoid'))
@@ -54,7 +87,7 @@ for train, test in kfold.split(X2, Y2):
 
 	# Fit the model
 
-	model.fit(X2[train], Y3[train], nb_epoch=100, batch_size=96)
+	model.fit(X2[train], Y3[train], nb_epoch=200, batch_size=96)
 
 	# evaluate the model
 	scores = model.evaluate(X2[test], Y3[test])
@@ -71,6 +104,27 @@ print("%.2f%% (+/- %.2f%%)" % (numpy.mean(cvscores), numpy.std(cvscores)))
 #print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
 Z = model.predict(X, batch_size=32, verbose=0)
+
+s = 0
+b = 0
+
+for i in range(0,9999):
+	if (Z[i][1]>Z[i][0]):
+		if (Y[i][1]>Y[i][0]):
+			s = s + W[i][0]
+		if (Y[i][1]<=Y[i][0]):
+			b = b + W[i][0]
+
+br = 10.0
+radicand = 2 *( (s+b+br) * math.log (1.0 + s/(b+br)) -s)
+AMS = math.sqrt(radicand)
+
+
+print("AMS : ")
+print(AMS)
+
+
+
 print(Z[1:10])
 print(Y[1:10])
 
@@ -81,9 +135,9 @@ print(Y[1:10])
 # Learning rate
 # L1 penalty DONE
 # L2 penalty
-# AMS metric NECESSAIRE?
+# AMS metric DONE
 # Advanced features
-# Winner takes all activation 
+# Winner takes all activation DONE 
 # Constrain neurons in first layer
 #
 #

@@ -70,7 +70,7 @@ Y2 = dataset[10000:230000:,32].astype(float)
 # Notes : minv(tau,lep) (3) | 
 
 
-for i in range(19999):
+for i in range(9999):
 	# Implementation of Phi derived features
 	X[i,24] = min(dataset[i,26]-dataset[i,25],dataset[i,26]-dataset[i,24],dataset[i,25]-dataset[i,24])
 	X[i,25] = min(dataset[i,26]-dataset[i,24],dataset[i,25]-dataset[i,24])
@@ -82,7 +82,7 @@ for i in range(19999):
 	
 
 
-for i in range(80000):
+for i in range(220000):
 	# Implementation of Phi derived features
 	X2[i,24] = min(dataset[i,26]-dataset[i,25],dataset[i,26]-dataset[i,24],dataset[i,25]-dataset[i,24])
 	X2[i,25] = min(dataset[i,26]-dataset[i,24],dataset[i,25]-dataset[i,24])

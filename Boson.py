@@ -39,7 +39,7 @@ class WinnerTakeAll1D_GaborMellis(Layer):
         shape = list(input_shape)
         return tuple(shape)
     
-L=WinnerTakeAll1D_GaborMellis(spatial=1, OneOnX=4)
+L=WinnerTakeAll1D_GaborMellis(spatial=1, OneOnX=3)
 
 # load dataset
 dataframe = pandas.read_csv("training.csv", header=None)
@@ -62,14 +62,15 @@ dataset[:,[21,24]]
 W = dataset[1:10000:,31:32]
 X = dataset[1:10000:,1:29].astype(float)
 Y = dataset[1:10000:,32].astype(float)
-X2 = dataset[10000:100000:,1:29].astype(float)
-Y2 = dataset[10000:100000:,32].astype(float)
+X2 = dataset[10000:230000:,1:29].astype(float)
+Y2 = dataset[10000:230000:,32].astype(float)
 
 
 # Implementation of advanced features in x and x2
 # Notes : minv(tau,lep) (3) | 
 
-for i in range(9999):
+
+for i in range(19999):
 	# Implementation of Phi derived features
 	X[i,24] = min(dataset[i,26]-dataset[i,25],dataset[i,26]-dataset[i,24],dataset[i,25]-dataset[i,24])
 	X[i,25] = min(dataset[i,26]-dataset[i,24],dataset[i,25]-dataset[i,24])
@@ -81,7 +82,7 @@ for i in range(9999):
 	
 
 
-for i in range(90000):
+for i in range(80000):
 	# Implementation of Phi derived features
 	X2[i,24] = min(dataset[i,26]-dataset[i,25],dataset[i,26]-dataset[i,24],dataset[i,25]-dataset[i,24])
 	X2[i,25] = min(dataset[i,26]-dataset[i,24],dataset[i,25]-dataset[i,24])
@@ -106,11 +107,11 @@ model = Sequential()
 #model.add(MaxPooling1D(pool_length=10))
 #model.add(GlobalMaxPooling1D())
 #model.add(Flatten())  
-model.add(Dense(100, input_dim=28, init='normal', activation='relu' ,W_regularizer=l1(0.000001), activity_regularizer=activity_l1(0.000001)))
+model.add(Dense(600, input_dim=28, init='normal', activation='relu' ,W_regularizer=l1l2(l1=0.000005, l2=0.00005))) #W_regularizer=l1(0.000001), activity_regularizer=activity_l1(0.000001)))
 model.add(L)
-model.add(Dense(100, activation ='relu'))
+model.add(Dense(600, activation ='relu'))
 model.add(L)
-model.add(Dense(100, activation ='relu'))
+model.add(Dense(600, activation ='relu'))
 model.add(L)
 model.add(Dense(2))
 model.add(Activation('softmax'))
@@ -119,12 +120,12 @@ model.add(Activation('softmax'))
 # Compile model
 #model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 #sgd = SGD(lr=0.01, momentum=0, decay=0, nesterov=False)
-rms = RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.001)
+rms = RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.0001)
 model.compile(optimizer=rms, loss='binary_crossentropy', metrics=['accuracy']) # Gradient descent
 #model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy']) # Gradient descent
 #model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy']) # Gradient descent
 
-for i in range(10):
+for i in range(5):
 	for train, test in kfold.split(X2, Y2):
 		# create model
 	
@@ -176,7 +177,7 @@ print(Y[1:10])
 
 #----------------------------------------------------------------------------
 # TO DO
-# CV bagging DONE
+# CV bagging with 10 repetitions DONE
 # Momentum
 # Learning rate
 # L1 penalty DONE

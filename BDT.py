@@ -31,12 +31,23 @@ reg = reg.fit(X_train,Y_train)
 R = reg.predict(X_test)
 reg.score(X_test,Y_test)
 cr=0.
+sr=0
+br=0
 for i in range(len(X_test)):
     if R[i]== Y_test[i]:
         cr+=1
-score_R=cr*100/len(X_test)   
+    if R[i]==1:
+        if Y_test[i]==1:
+            sr= sr + W[i]
+        if Y_test[i]==0:
+            br= br + W[i]
+score_R=cr*100/len(X_test) 
+radicandR = 2 *( (sr+br+10) * math.log (1.0 + sr/(br+10)) -sr)
+AMS_R = math.sqrt(radicandR)
 print score_R
+print 'AMS_R =',AMS_R
 #71.07
+#AMS_R = 0.273223317766
 
 from sklearn.ensemble import AdaBoostRegressor
 

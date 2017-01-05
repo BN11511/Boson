@@ -50,6 +50,7 @@ for i in range(len(X_test)):
         ca+=1
 score_A=ca*100/len(X_test)
 print score_A
+#83 with 100 estimators
 #82 with 50 estimators
 #79 with 10 estimators
 

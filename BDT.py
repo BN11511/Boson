@@ -56,14 +56,24 @@ ada = AdaBoostRegressor(base_estimator=reg,
                          learning_rate=0.1, random_state=0)
 ada = ada.fit(X_train, Y_train)
 A=ada.predict(X_test)
-ca=0
+ca=0.
+sa=0
+ba=0
 for i in range(len(X_test)):
     if A[i]== Y_test[i]:
         ca+=1
-score_A=ca*100/len(X_test)
+    if A[i]==1:
+        if Y_test[i]==1:
+            sa= sa + W[i]
+        if Y_test[i]==0:
+            ba= ba + W[i]
+score_A=ca*100/len(X_test) 
+radicandA = 2 *( (sa+ba+10) * math.log (1.0 + sa/(ba+10)) -sa)
+AMS_A = math.sqrt(radicandA)
 print score_A
+print 'AMS_A =',AMS_A
 #83 with 100 estimators
-#82 with 50 estimators
+#82.5 with 50 estimators, AMS_A=0.505636131249
 #79 with 10 estimators
 
 from sklearn.ensemble import RandomForestRegressor

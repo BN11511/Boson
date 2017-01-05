@@ -110,3 +110,28 @@ print score_C
 print 'AMS_C =',AMS_C
 #70.65
 #AMS_C = 0.272780740678
+
+from sklearn.ensemble import RandomForestClassifier
+
+forest = RandomForestClassifier(n_estimators = 50,random_state=0)
+forest = forest.fit(X_train,Y_train)
+F=forest.predict(X_test)
+
+cf=0.
+sf=0
+bf=0
+for i in range(len(X_test)):
+    if F[i]== Y_test[i]:
+        cf+=1
+    if F[i]==1:
+        if Y_test[i]==1:
+            sf= sf + W[i]
+        if Y_test[i]==0:
+            bf= bf + W[i]
+score_F=cf*100/len(X_test) 
+radicandF = 2 *( (sf+bf+10) * math.log (1.0 + sf/(bf+10)) -sf)
+AMS_F = math.sqrt(radicandF)
+print score_F
+print 'AMS_F =',AMS_F
+#83.2
+#AMS_F = 0.536340014348

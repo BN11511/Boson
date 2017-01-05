@@ -50,6 +50,7 @@ for i in range(len(X_test)):
         ca+=1
 score_A=ca*100/len(X_test)
 print score_A
+#82
 
 from sklearn.ensemble import RandomForestRegressor
 
@@ -63,3 +64,14 @@ for i in range(len(X_test)):
 score_F=cf*100/len(X_test)
 print score_F
                          
+clf = tree.DecisionTreeClassifier ()
+clf = clf.fit(X_train,Y_train)
+
+C = clf.predict(X_test)
+cc=0.
+for i in range(len(X_test)):
+    if C[i]== Y_test[i]:
+        cc+=1
+score_C=cc*100/len(X_test)
+print score_C
+#73.5473333333

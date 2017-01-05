@@ -77,4 +77,4 @@ for i in range(len(X_test)):
         cc+=1
 score_C=cc*100/len(X_test)
 print score_C
-#73.5473333333
+#70.65

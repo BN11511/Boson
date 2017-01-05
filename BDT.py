@@ -73,7 +73,7 @@ AMS_A = math.sqrt(radicandA)
 print score_A
 print 'AMS_A =',AMS_A
 #83 with 100 estimators
-#82.5 with 50 estimators, AMS_A=0.505636131249
+#82 with 50 estimators, AMS_A=0.505636131249
 #79 with 10 estimators
 
 from sklearn.ensemble import RandomForestRegressor

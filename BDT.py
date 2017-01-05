@@ -93,9 +93,20 @@ clf = clf.fit(X_train,Y_train)
 
 C = clf.predict(X_test)
 cc=0.
+sc=0
+bc=0
 for i in range(len(X_test)):
     if C[i]== Y_test[i]:
         cc+=1
-score_C=cc*100/len(X_test)
+    if C[i]==1:
+        if Y_test[i]==1:
+            sc= sc + W[i]
+        if Y_test[i]==0:
+            bc= bc + W[i]
+score_C=cc*100/len(X_test) 
+radicandC = 2 *( (sc+bc+10) * math.log (1.0 + sc/(bc+10)) -sc)
+AMS_C = math.sqrt(radicandC)
 print score_C
+print 'AMS_C =',AMS_C
 #70.65
+#AMS_C = 0.272780740678

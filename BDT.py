@@ -135,3 +135,28 @@ print score_F
 print 'AMS_F =',AMS_F
 #83.2
 #AMS_F = 0.536340014348
+
+from sklearn.ensemble import GradientBoostingClassifier
+
+gradient = GradientBoostingClassifier(n_estimators=50, random_state=0)
+gradient = gradient.fit(X_train,Y_train)
+G=gradient.predict(X_test)
+
+cg=0.
+sg=0
+bg=0
+for i in range(len(X_test)):
+    if G[i]== Y_test[i]:
+        cg+=1
+    if G[i]==1:
+        if Y_test[i]==1:
+            sg= sg + W[i]
+        if Y_test[i]==0:
+            bg= bg + W[i]
+score_G=cg*100/len(X_test) 
+radicandG = 2 *( (sg+bg+10) * math.log (1.0 + sg/(bg+10)) -sg)
+AMS_G = math.sqrt(radicandG)
+print score_G
+print 'AMS_G =',AMS_G
+#82.33
+#AMS_G = 0.51961354779

@@ -2,6 +2,7 @@ from sklearn import tree
 
 import pandas
 import numpy
+import math
 
 dataframe_train = pandas.read_csv("training.csv", header=None)
 dataset_train = dataframe_train.values
